@@ -2277,6 +2277,8 @@ def _define_module_for_target_variant_chipset(target, variant, chipset):
         grepSrcFiles.append("//msm-kernel:{}".format(e["file"]))
 
     depsetSrc = depset(grepSrcFiles)
+    gki_config_chipset = chipset.replace("-", "_") if target in ["pineapple", "sun"] else chipset
+
     native.genrule(
         name = "{}_grep_defines".format(tvc),
         outs = ["configs/grep_defines_{}.h".format(tvc)],
@@ -2293,7 +2295,7 @@ def _define_module_for_target_variant_chipset(target, variant, chipset):
         name = "configs/{}_defconfig_generate_consolidate".format(tvc),
         outs = ["configs/{}_defconfig.generated_consolidate".format(tvc)],
         srcs = [
-            "configs/{}_gki_{}_defconfig".format(target, chipset),
+            "configs/{}_gki_{}_defconfig".format(target, gki_config_chipset),
             "configs/{}_consolidate_{}_defconfig".format(target, chipset),
         ],
         cmd = "cat $(SRCS) > $@",
@@ -2302,7 +2304,7 @@ def _define_module_for_target_variant_chipset(target, variant, chipset):
         name = "configs/{}_defconfig_generate_gki".format(tvc),
         outs = ["configs/{}_defconfig.generated_gki".format(tvc)],
         srcs = [
-            "configs/{}_gki_{}_defconfig".format(target, chipset),
+            "configs/{}_gki_{}_defconfig".format(target, gki_config_chipset),
         ],
         cmd = "cat $(SRCS) > $@",
     )
@@ -2310,7 +2312,7 @@ def _define_module_for_target_variant_chipset(target, variant, chipset):
         name = "configs/{}_defconfig_generate_perf".format(tvc),
         outs = ["configs/{}_defconfig.generated_perf".format(tvc)],
         srcs = [
-            "configs/{}_gki_{}_defconfig".format(target, chipset),
+            "configs/{}_gki_{}_defconfig".format(target, gki_config_chipset),
         ],
         cmd = "cat $(SRCS) > $@",
     )
